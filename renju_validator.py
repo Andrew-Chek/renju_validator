@@ -68,12 +68,12 @@ def is_win_strike(board, x, y, direction):
     if within_the_board(prev_x, prev_y) and board[prev_x][prev_y] == cell:
         return False
     
-    for i in range(1, 5):
-        next_x, next_y = x + i*dx, y + i*dy
+    for i in range(1, WIN_STRIKE):
+        next_x, next_y = x + i * dx, y + i * dy
         if not within_the_board(next_x, next_y) or board[next_x][next_y] != cell:
             return False
-    
-    next_x, next_y = x + 5*dx, y + 5*dy
+
+    next_x, next_y = x + WIN_STRIKE * dx, y + WIN_STRIKE * dy
     if within_the_board(next_x, next_y) and board[next_x][next_y] == cell:
         return False
     
@@ -87,20 +87,18 @@ def check_renju_winner(board: List[List[int]]) -> Tuple[int, Optional[int], Opti
                 continue
             
             for direction in DIRECTIONS:
-                if direction.win_impossible(x, y):
-                    continue
-                if not is_win_strike(board, x, y, direction):
+                if direction.win_impossible(x, y) or not is_win_strike(board, x, y, direction):
                     continue
                 left_most_x, left_most_y = direction.left_most(x, y)
                 return cell, left_most_x + 1, left_most_y + 1
-    
+
     return CELL_EMPTY, None, None
 
 def main():
     if len(sys.argv) != 2:
         print("Please provide a file path to the board configuration")
         return
-    
+
     try:
         boards = read_all_test_cases(sys.argv[1])
         for i, board in enumerate(boards):
